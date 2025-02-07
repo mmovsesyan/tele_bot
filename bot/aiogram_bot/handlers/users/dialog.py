@@ -11,6 +11,7 @@ from bot.texts import (AUTO_MODEL_CHANGED_TXT, DIALOG_ENDED_TXT,
                        DIALOG_STARTED_TXT, NO_REQUESTS_FOR_MODEL_TXT,
                        NO_REQUESTS_TXT, PLANS_BTN, START_MSG_FROM_AI_TXT,
                        STOP_DIALOG_BTN, USE_PART_TXT)
+from bot.utils.config import ADMIN_IDS
 from bot.utils.json_worker import get_plan_by_name
 from bot.utils.util import write_error
 
@@ -20,6 +21,9 @@ router = Router()
 async def auto_change_model(user: User, bot: Bot, type_: int):
     plans = await json_worker.read("config/plans.json")
     plan = get_plan_by_name(plans, user.plan)
+    if user.user_id in ADMIN_IDS or user.is_admin:
+        return plan
+        
     ai = AI[user.current_model]
     reqs = user.request_remains[user.current_model]
     if reqs <= 0:
@@ -92,8 +96,8 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         await message.bot.send_chat_action(message.chat.id, "typing")
         answer, messages = await ai.generate(request, messages, max_tokens)
         await message.answer(answer, reply_markup=stop_dialog_keyboard)
-
-        user.request_remains[user.current_model] -= 1
+        if user.user_id not in ADMIN_IDS or not user.is_admin:
+            user.request_remains[user.current_model] -= 1
 
         await update_user(user.user_id, request_remains=user.request_remains)
         await state.update_data(messages=messages)
