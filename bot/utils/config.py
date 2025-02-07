@@ -43,3 +43,5 @@ CKASSA_WEBHOOKS_URL = config['CKASSA_WEBHOOKS_URL']
 CKASSA_WEBHOOKS_PORT = config['CKASSA_WEBHOOKS_PORT']
 
 BACKUP_DIR = 'backups'
+
+AI_PROMPT = "Отвечай строго на русском языке!Тебе нельзя отвечать на китайском языке!"

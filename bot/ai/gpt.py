@@ -2,6 +2,7 @@ import openai
 from openai import AsyncOpenAI
 
 from bot.texts import GPT_TXT
+from bot.utils.config import AI_PROMPT
 
 
 class GPT:
@@ -19,6 +20,8 @@ class GPT:
         self.name = GPT_TXT
 
     async def generate(self, prompt: str, messages, max_tokens) -> tuple:
+        if not messages:
+            messages = [{"role": "system", "content": AI_PROMPT}]
         messages.append({"role": "user", "content": prompt})
 
         response = await self.client.chat.completions.create(
