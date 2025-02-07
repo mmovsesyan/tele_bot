@@ -1,0 +1,55 @@
+[
+    {
+        "uid": "free",
+        "name": "Бесплатный",
+        "price": 0,
+        "day_reqs": {
+            "gpt": 4,
+            "qwen": 0
+        },
+        "output_tokens": 150
+    },
+    {
+        "uid": "trial",
+        "name": "Пробный",
+        "price": 0,
+        "day_reqs": {
+            "gpt": 10,
+            "qwen": 20
+        },
+        "output_tokens": 100
+    },
+    {
+        "uid": "usual",
+        "name": "Базовый",
+        "price": 560,
+        "day_reqs": {
+            "gpt": 7,
+            "qwen": 20
+        },
+        "output_tokens": 150,
+        "emoji": "⚡"
+    },
+    {
+        "uid": "standart",
+        "name": "Стандарт",
+        "price": 1200,
+        "day_reqs": {
+            "gpt": 15,
+            "qwen": 20
+        },
+        "output_tokens": 2,
+        "emoji": "🔥"
+    },
+    {
+        "uid": "premium",
+        "name": "Премиум",
+        "price": 2500,
+        "day_reqs": {
+            "gpt": 25,
+            "qwen": 20
+        },
+        "output_tokens": 300,
+        "emoji": "💎"
+    }
+]

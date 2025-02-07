@@ -1,0 +1,12 @@
+aiogram
+sqlalchemy
+asyncpg
+pytz
+PyYAML==6.0.1
+redis
+
+openai
+
+openpyxl
+
+psycopg2-binary
