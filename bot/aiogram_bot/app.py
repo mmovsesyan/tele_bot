@@ -54,6 +54,7 @@ def register_routers(dp: Dispatcher):
     from bot.aiogram_bot.handlers.admins import get_info
     from bot.aiogram_bot.handlers.admins import give_admin
     from bot.aiogram_bot.handlers.admins import upload_users
+    from bot.aiogram_bot.handlers.users import get_offer
     dp.include_routers(
         dialog.router,
         enter_promo.router,
@@ -62,6 +63,7 @@ def register_routers(dp: Dispatcher):
         ref.router,
         settings.router,
         switch_autopayment.router,
+        get_offer.router,
         tariffes.router,
 
         ban_user.router,

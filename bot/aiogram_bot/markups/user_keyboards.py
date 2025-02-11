@@ -1,7 +1,7 @@
 from aiogram import types
 
 from bot.database.models import User
-from bot.texts import PLANS_BTN, START_DIALOG_BTN, AUTOPAY_SWITCH_BTN, ENTER_PROMO_BTN, REF_BTN, \
+from bot.texts import GET_OFFER_BTN, PLANS_BTN, START_DIALOG_BTN, AUTOPAY_SWITCH_BTN, ENTER_PROMO_BTN, REF_BTN, \
     ADMIN_JOIN_BTN, PLANS_BUY_PART_BTN, BACK_BTN, SETTINGS_BTN, CANCEL_BTN, BUY_BTN, CHOICED_MODEL_PART_TXT, \
     STOP_DIALOG_BTN, INFO_BTN, GPT_MODEL_BTN, QWEN_MODEL_BTN
 from bot.utils.config import ADMIN_IDS
@@ -13,7 +13,7 @@ def get_main_menu(user: User):
         [types.InlineKeyboardButton(text=START_DIALOG_BTN, callback_data="start_dialog")],
         [types.InlineKeyboardButton(text=PLANS_BTN, callback_data="show_plans")],
         [types.InlineKeyboardButton(text=INFO_BTN, callback_data="show_info"),
-         types.InlineKeyboardButton(text=AUTOPAY_SWITCH_BTN, callback_data="switch_autopay")],
+         types.InlineKeyboardButton(text=GET_OFFER_BTN, callback_data="get_offer")],
         [types.InlineKeyboardButton(text=ENTER_PROMO_BTN, callback_data="enter_promo"),
          types.InlineKeyboardButton(text=SETTINGS_BTN, callback_data="show_settings")],
         [types.InlineKeyboardButton(text=REF_BTN, callback_data="show_ref")],

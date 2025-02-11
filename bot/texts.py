@@ -5,6 +5,7 @@ PLANS_BTN = "📃 Тарифы"
 BACK_BTN = "🔙 Назад"
 START_DIALOG_BTN = "💬 Начать диалог"
 AUTOPAY_SWITCH_BTN = "💳 Автоплатеж"
+GET_OFFER_BTN = "📄 Оферта"
 ENTER_PROMO_BTN = "📎 Ввести промокод"
 SETTINGS_BTN = "⚙ Настройки"
 REF_BTN = "🤝 Реферальная система"
@@ -120,3 +121,4 @@ PAYMENT_SUCCEED_TXT = "🎉 <b>Подписка на тариф {} успешн�
 
 REF_INVITED_TXT = f"🤝 <b>Вам был начислен +1 день подписки действующего тарифа за приглашенного реферала!</b>"
 REF_TO_INVITED_TXT = f"🤝 <b>Вам был начислен +1 день пробной подписки!</b>"
+
