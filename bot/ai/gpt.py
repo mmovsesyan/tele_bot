@@ -24,11 +24,17 @@ class GPT:
             messages = [{"role": "system", "content": AI_PROMPT}]
         messages.append({"role": "user", "content": prompt})
 
-        response = await self.client.chat.completions.create(
+        if not max_tokens:
+            response = await self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            max_completion_tokens=max_tokens,
         )
+        else:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                max_completion_tokens=max_tokens,
+            )
 
         reply = response.choices[0].message.content
 

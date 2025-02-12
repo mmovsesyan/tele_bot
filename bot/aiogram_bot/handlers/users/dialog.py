@@ -11,7 +11,7 @@ from bot.texts import (AUTO_MODEL_CHANGED_TXT, DIALOG_ENDED_TXT,
                        DIALOG_STARTED_TXT, NO_REQUESTS_FOR_MODEL_TXT,
                        NO_REQUESTS_TXT, PLANS_BTN, START_MSG_FROM_AI_TXT,
                        STOP_DIALOG_BTN, USE_PART_TXT)
-from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL
+from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT
 from bot.utils.json_worker import get_plan_by_name
 from bot.utils.util import write_error
 
@@ -95,6 +95,9 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         data = await state.get_data()
         messages = data.get("messages", [])
         max_tokens = max_tokens if len(messages) == 0 else int((max_tokens * ((len(messages) / 2) + 1)))
+        if user.user_id in ADMIN_IDS or user.is_admin:
+            max_tokens = OPENAI_ADMIN_TOKEN_LIMIT
+        print(max_tokens)
         await message.bot.send_chat_action(message.chat.id, "typing")
         answer, messages = await ai.generate(request, messages, max_tokens)
         await message.answer(answer, reply_markup=stop_dialog_keyboard)
