@@ -11,7 +11,7 @@ from bot.texts import (AUTO_MODEL_CHANGED_TXT, DIALOG_ENDED_TXT,
                        DIALOG_STARTED_TXT, NO_REQUESTS_FOR_MODEL_TXT,
                        NO_REQUESTS_TXT, PLANS_BTN, START_MSG_FROM_AI_TXT,
                        STOP_DIALOG_BTN, USE_PART_TXT)
-from bot.utils.config import ADMIN_IDS
+from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL
 from bot.utils.json_worker import get_plan_by_name
 from bot.utils.util import write_error
 
@@ -87,6 +87,8 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         return
     try:
         ai = AI[user.current_model]
+        if (user.user_id in ADMIN_IDS or user.is_admin) and user.current_model == "gpt":
+            ai.model = OPENAI_ADMIN_MODEL
 
         max_tokens = plan["output_tokens"]
         request = message.text
