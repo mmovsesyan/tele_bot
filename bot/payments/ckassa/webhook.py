@@ -27,7 +27,7 @@ async def handle_webhook(request, bot):
         try:
             if data['state'] != 'PAYED':
                 return web.json_response({"status": "success"}, status=200)
-            dat = data['property']['ЛИЦЕВОЙ_СЧЕТ']
+            dat = data['property']['ОПИСАНИЕ']
             id_, plan_name, _ = dat.split(':')
             user_id_ = int(id_)
             p = plan_name

@@ -118,7 +118,7 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
         payment_link = await ckassa.create_invoice(
             amount=plan["price"],
             properties=[
-                {"name": "ЛИЦЕВОЙ_СЧЕТ", "value": f"{user.user_id}:{plan['uid']}:30"},
+                {"name": "ОПИСАНИЕ", "value": f"{user.user_id}:{plan['uid']}:30"},
                 {"name": "ID", "value": int(f"{user.user_id}{int(time.time())}")},
                 {"name": "telegram_ID", "value": user.user_id},
             ]
