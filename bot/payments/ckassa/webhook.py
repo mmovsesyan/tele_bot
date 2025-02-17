@@ -43,7 +43,11 @@ async def handle_webhook(request, bot):
             
         except Exception as e:
             write_error(e)
-            await add_log(user_id=user_id_, message=f"Ошибка при обработке платежа", data=e)
+            try:
+                await add_log(user_id=user_id_, message=f"Ошибка при обработке платежа", data=e)
+            except Exception as e:
+                await add_log(user_id=0, message=f"Ошибка при обработке платежа", data=e)
+
             return web.json_response({"status": "error"}, status=500)
         
         return web.json_response({"status": "success"}, status=200)

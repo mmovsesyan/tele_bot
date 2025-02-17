@@ -114,9 +114,13 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
         return
 
     try:
-        payment_link = await ckassa.create_anonymous_payment(
+        payment_link = await ckassa.create_invoice(
             amount=plan["price"],
-            user_data=f"{user.user_id}:{plan['uid']}:30",
+            properties=[
+                {"name": "ЛИЦЕВОЙ_СЧЕТ", "value": f"{user.user_id}:{plan['uid']}:30"},
+                {"name": "ID", "value": user.user_id},
+                {"name": "telegram_ID", "value": user.user_id},
+            ]
         )
     except Exception as e:
         write_error(e)

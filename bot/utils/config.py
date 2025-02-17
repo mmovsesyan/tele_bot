@@ -37,9 +37,9 @@ REDIS_HOST = config['REDIS_HOST']
 REDIS_DB = config['REDIS_DB']
 
 CKASSA_BASE_URL = config['CKASSA_BASE_URL']
-CKASSA_SHOP_TOKEN = config['CKASSA_SHOP_TOKEN']
-CKASSA_SEC_KEY = config['CKASSA_SEC_KEY']
-CKASSA_SERVICE_CODE = config['CKASSA_SERVICE_CODE']
+ApiLoginAuthorization = config['ApiLoginAuthorization']
+ApiAuthorization = config['ApiAuthorization']
+servCode = config['servCode']
 CKASSA_WEBHOOKS_URL = config['CKASSA_WEBHOOKS_URL']
 CKASSA_WEBHOOKS_PORT = config['CKASSA_WEBHOOKS_PORT']
 

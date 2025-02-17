@@ -1,15 +1,16 @@
-import httpx
+import base64
 import ssl
 from typing import Dict, Any, Optional
+
+import httpx
+
+from bot.utils.config import ApiLoginAuthorization, ApiAuthorization, servCode
 
 
 class CKassa:
     def __init__(
             self,
             base_url: str,
-            shop_token: str,
-            sec_key: str,
-            provider_code: str,
             webhook_url: str,
             timeout: Optional[httpx.Timeout] = None
     ):
@@ -18,34 +19,36 @@ class CKassa:
 
         ssl_context = ssl.create_default_context()
         ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
+        auth = httpx.BasicAuth(ApiLoginAuthorization, ApiAuthorization)
 
         self.base_url = base_url
         self.timeout = timeout
         self.client = httpx.AsyncClient(
             base_url=self.base_url,
             timeout=self.timeout,
-            auth=httpx.BasicAuth(username=shop_token, password=sec_key),
+            auth=auth,
             verify=ssl_context,
         )
-        self.provider_code = provider_code
         self.webhook_url = webhook_url
 
-    async def create_anonymous_payment(
+    async def create_invoice(
             self,
             amount: int,
-            user_data: str,
-            **kwargs: Any
+            properties: list[str]
     ) -> Dict[str, Any]:
         payload = {
-            "serviceCode": self.provider_code,
+            "serviceCode": servCode,
             "amount": str(int(amount) * 100),
             "comission": str(0),
-            "properties": [{'name': "ЛИЦЕВОЙ_СЧЕТ", "value": user_data}],
-            "cbUrl": self.webhook_url
+            "properties": properties,
+            "cbUrl": self.webhook_url,
         }
-        payload.update(kwargs)
+        response = await self.client.post(
+            "do/payment/anonymous",
 
-        response = await self.client.post("/do/payment/anonymous", json=payload)
+            json=payload
+        )
+        print(response.text)
         response.raise_for_status()
         return response.json()['payUrl']
 
