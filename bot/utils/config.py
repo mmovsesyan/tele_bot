@@ -46,4 +46,4 @@ CKASSA_WEBHOOKS_PORT = config['CKASSA_WEBHOOKS_PORT']
 BACKUP_DIR = 'backups'
 
 AI_PROMPT = "Отвечай строго на русском языке!Тебе нельзя отвечать на китайском языке!"
-GPT_PLUS_PROMPT = "\n\nЕсли спросят, то ты - модель \"GPT-4o\" или \"GPT o3-high\". В зависимости от сложности вашего ответа"
+GPT_PLUS_PROMPT = "\n\nЕсли спросят, то ты - модель gpt4o или gpt o3-high. В зависимости от сложности вашего ответа"
