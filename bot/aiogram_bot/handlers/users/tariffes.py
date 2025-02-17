@@ -1,4 +1,5 @@
 import html
+import time
 
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
@@ -118,7 +119,7 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
             amount=plan["price"],
             properties=[
                 {"name": "ЛИЦЕВОЙ_СЧЕТ", "value": f"{user.user_id}:{plan['uid']}:30"},
-                {"name": "ID", "value": user.user_id},
+                {"name": "ID", "value": int(f"{user.user_id}{int(time.time())}")},
                 {"name": "telegram_ID", "value": user.user_id},
             ]
         )
