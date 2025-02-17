@@ -2,7 +2,7 @@ import openai
 from openai import AsyncOpenAI
 
 from bot.texts import GPT_TXT
-from bot.utils.config import AI_PROMPT
+from bot.utils.config import AI_PROMPT, GPT_PLUS_PROMPT
 
 
 class GPT:
@@ -20,7 +20,11 @@ class GPT:
 
     async def generate(self, model, prompt: str, messages, max_tokens) -> tuple:
         if not messages:
-            messages = [{"role": "system", "content": AI_PROMPT}]
+            prompt_2 = AI_PROMPT
+            if self.name == GPT_TXT:
+                prompt_2 += GPT_PLUS_PROMPT
+            print(prompt_2)
+            messages = [{"role": "system", "content": prompt_2}]
         messages.append({"role": "user", "content": prompt})
 
         if not max_tokens:
