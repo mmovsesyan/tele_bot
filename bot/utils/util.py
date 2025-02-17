@@ -82,3 +82,8 @@ def generate_users_xlsx(users: List[User]) -> BytesIO:
 
 def format_datetime(dt: datetime) -> str:
     return dt.strftime('%d.%m.%Y') if dt else 'Нет'
+
+
+def escape_markdown_v2(text: str) -> str:
+    escape_chars = r"\_*[]()~`>#+-=|{}.!<>"
+    return "".join(f"\\{char}" if char in escape_chars else char for char in text)

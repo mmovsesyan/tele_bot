@@ -1,4 +1,5 @@
 from aiogram import Bot, F, Router, types
+from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 
 from bot import AI, json_worker
@@ -11,9 +12,9 @@ from bot.texts import (AUTO_MODEL_CHANGED_TXT, DIALOG_ENDED_TXT,
                        DIALOG_STARTED_TXT, NO_REQUESTS_FOR_MODEL_TXT,
                        NO_REQUESTS_TXT, PLANS_BTN, START_MSG_FROM_AI_TXT,
                        STOP_DIALOG_BTN, USE_PART_TXT)
-from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT
+from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT, OPENAI_MODEL, QWEN_MODEL
 from bot.utils.json_worker import get_plan_by_name
-from bot.utils.util import write_error
+from bot.utils.util import write_error, escape_markdown_v2
 
 router = Router()
 
@@ -23,7 +24,7 @@ async def auto_change_model(user: User, bot: Bot, type_: int):
     plan = get_plan_by_name(plans, user.plan)
     if user.user_id in ADMIN_IDS or user.is_admin:
         return plan
-        
+
     ai = AI[user.current_model]
     reqs = user.request_remains[user.current_model]
     if reqs <= 0:
@@ -87,9 +88,10 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         return
     try:
         ai = AI[user.current_model]
+        model = OPENAI_MODEL if user.current_model == 'gpt' else QWEN_MODEL
         if (user.user_id in ADMIN_IDS or user.is_admin) and user.current_model == "gpt":
-            ai.model = OPENAI_ADMIN_MODEL
-
+            model = OPENAI_ADMIN_MODEL
+        print(model)
         max_tokens = plan["output_tokens"]
         request = message.text
         data = await state.get_data()
@@ -99,8 +101,8 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
             max_tokens = OPENAI_ADMIN_TOKEN_LIMIT
         print(max_tokens)
         await message.bot.send_chat_action(message.chat.id, "typing")
-        answer, messages = await ai.generate(request, messages, max_tokens)
-        await message.answer(answer, reply_markup=stop_dialog_keyboard)
+        answer, messages = await ai.generate(model, request, messages, max_tokens)
+        await message.answer(f"```\n{escape_markdown_v2(answer)}\n```", reply_markup=stop_dialog_keyboard, parse_mode=ParseMode.MARKDOWN_V2)
         if user.user_id not in ADMIN_IDS or not user.is_admin:
             user.request_remains[user.current_model] -= 1
 
@@ -109,5 +111,5 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
     except Exception as e:
         filename = write_error(e)
         await message.answer("Произошла ошибка, попробуйте позже", reply_markup=get_main_menu(user))
-        await state.clear() 
+        await state.clear()
         return

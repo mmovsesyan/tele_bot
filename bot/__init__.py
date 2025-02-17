@@ -5,8 +5,8 @@ from bot.utils.config import OPENAI_API_KEY, OPENAI_MODEL, QWEN_API_KEY, QWEN_MO
 from bot.utils.json_worker import AsyncJsonHandler
 
 AI = {
-    'gpt': GPT(OPENAI_API_KEY, OPENAI_MODEL),
-    'qwen': Qwen(QWEN_API_KEY, QWEN_MODEL, "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"),
+    'gpt': GPT(OPENAI_API_KEY),
+    'qwen': Qwen(QWEN_API_KEY, "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"),
 }
 
 ckassa = CKassa(CKASSA_BASE_URL, CKASSA_WEBHOOKS_URL)
