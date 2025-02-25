@@ -48,5 +48,5 @@ GEN_VIDEO_ASPECT_RATIO = config['GEN_VIDEO_ASPECT_RATIO']
 GEN_VIDEO_API_KEY = config['GEN_VIDEO_API_KEY']
 BACKUP_DIR = 'backups'
 
-AI_PROMPT = "Отвечай строго на русском языке!Тебе нельзя отвечать на китайском языке!"
+AI_PROMPT = "Отвечай строго на русском языке!Тебе нельзя отвечать на китайском языке!Все ответы выдавай в читаемом виде!"
 GPT_PLUS_PROMPT = "\n\nЕсли спросят, то ты - модель gpt4o или gpt o3-high. В зависимости от сложности вашего ответа"

@@ -7,6 +7,7 @@ from bot.aiogram_bot.misc.states import VideoGeneration
 from bot.database.models import User
 from bot.database.requests.users import minus_video
 from bot.texts import ERROR_TXT, VIDEO_WAIT_PROMT_TXT, VIDEO_NO_GENS_TXT, VIDEO_WAIT_TXT
+from bot.utils.config import ADMIN_IDS
 from bot.utils.util import write_error
 
 router = Router()
@@ -21,13 +22,16 @@ async def video_generation(call: types.CallbackQuery, state: FSMContext, user: U
 @router.message(VideoGeneration.prompt, F.text)
 async def video_generation_2(message: types.Message, state: FSMContext, user: User):
     if user.video_gens < 1:
-        await message.answer(VIDEO_NO_GENS_TXT, parse_mode='HTML', reply_markup=get_main_menu(user))
-        return
+        if not (user.user_id in ADMIN_IDS or user.is_admin):
+            await message.answer(VIDEO_NO_GENS_TXT, parse_mode='HTML', reply_markup=get_main_menu(user))
+            return
     prompt = message.text
     await message.answer(VIDEO_WAIT_TXT, parse_mode='HTML', reply_markup=get_main_menu(user))
     await state.clear()
     try:
-        await minus_video(user.user_id)
+        if not (user.user_id in ADMIN_IDS or user.is_admin):
+
+            await minus_video(user.user_id)
         result_url = await veoapi.run(prompt)
         await message.reply_video(result_url)
     except Exception as e:

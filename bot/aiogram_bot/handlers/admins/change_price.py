@@ -16,11 +16,18 @@ include_middlewares(router, admin_middleware)
 
 
 @router.callback_query(F.data == "change_prices")
+@router.callback_query(F.data == "video_change_prices")
 async def change_prices(call: types.CallbackQuery, state: FSMContext):
-    await call.message.answer_document(FSInputFile('config/plans.json'), caption=ADM_CURRENT_PRICES_TXT)
+    data = call.data
+    if data == "video_change_prices":
+        await call.message.answer_document(FSInputFile('config/video_plans.json'), caption=ADM_CURRENT_PRICES_TXT)
+    else:
+        await call.message.answer_document(FSInputFile('config/plans.json'), caption=ADM_CURRENT_PRICES_TXT)
+
     await call.message.answer(ADM_SEND_NEW_PRICES_TXT, reply_markup=cancel_keyboard)
 
     await state.set_state(ChangePlans.new_plans)
+    await state.update_data(type_=data)
 
 
 @router.message(ChangePlans.new_plans, F.document)
@@ -28,11 +35,15 @@ async def change_prices_2(message: types.Message, state: FSMContext):
     filename_path = await downloading(message, None)
     filename_path = filename_path[0]
     status = await json_worker.validate(filename_path)
+    data = await state.get_data()
     if not status:
         await message.answer(ADM_JSON_ERROR_TXT, reply_markup=cancel_keyboard)
         return
     await state.clear()
 
-    await json_worker.write(filename_path, 'config/plans.json')
+    if data.get("type_") == "change_prices":
+        await json_worker.write(filename_path, 'config/plans.json')
+    else:
+        await json_worker.write(filename_path, 'config/video_plans.json')
 
     await message.answer(ADM_UPDATED_SUCCESS_TXT, reply_markup=admin_keyboard)
