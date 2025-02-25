@@ -7,7 +7,7 @@ documents/
 backups/
 config/
 tests/
-config_example/
+#config_example/
 .idea/
 errors/
 temp/

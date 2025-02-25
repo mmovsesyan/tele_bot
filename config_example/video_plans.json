@@ -1,0 +1,18 @@
+[
+    {
+        "uid": "0",
+        "usd_price": 4,
+        "videos": 5
+    },
+
+    {
+        "uid": "1",
+        "usd_price": 8,
+        "videos": 10
+    },
+    {
+        "uid": "2",
+        "usd_price": 12,
+        "videos": 15
+    }
+]
