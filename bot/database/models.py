@@ -4,7 +4,7 @@ from sqlalchemy import BigInteger, DateTime, Boolean, JSON
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-from bot.database.ensure_db_created import create_database
+from bot.database.ensure_db_created import create_database, auto_migrates
 from bot.utils.config import SQLALCHEMY_URL, SQLALCHEMY_DB_NAME, SQLALCHEMY_USER, SQLALCHEMY_PASSWORD, SQLALCHEMY_PORT, \
     SQLALCHEMY_IP
 
@@ -32,6 +32,8 @@ class User(Base):
     current_model: Mapped[str] = mapped_column(default='gpt')
     is_blocked = mapped_column(Boolean, default=False)
     is_admin = mapped_column(Boolean, default=False)
+    video_gens = mapped_column(BigInteger, default=0)
+
 
 
 class Promocode(Base):
@@ -63,6 +65,7 @@ class Log(Base):
 
 async def on_startup_database():
     create_database(SQLALCHEMY_DB_NAME, SQLALCHEMY_USER, SQLALCHEMY_PASSWORD, SQLALCHEMY_IP, SQLALCHEMY_PORT)
+    auto_migrates(SQLALCHEMY_DB_NAME, SQLALCHEMY_USER, SQLALCHEMY_PASSWORD, SQLALCHEMY_IP, SQLALCHEMY_PORT)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 

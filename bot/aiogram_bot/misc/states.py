@@ -38,3 +38,7 @@ class ChangePlans(StatesGroup):
 
 class GetInfo(StatesGroup):
     uid = State()
+
+
+class VideoGeneration(StatesGroup):
+    prompt = State()

@@ -70,3 +70,27 @@ def get_user_txt(user: User):
 
 def get_model(user: User) -> Union[GPT, Qwen]:
     return AI[user.current_model]
+
+
+async def minus_video(user_id: int):
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(
+                update(User)
+                .where(User.user_id == user_id, User.video_gens > 0)
+                .values(video_gens=User.video_gens - 1)
+            )
+            if result.rowcount == 0:
+                return False
+            return True
+async def add_videos(user_id: int, videos: int):
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(
+                update(User)
+                .where(User.user_id == user_id)
+                .values(video_gens=User.video_gens + videos)
+            )
+            if result.rowcount == 0:
+                return False
+            return True

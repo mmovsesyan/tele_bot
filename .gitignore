@@ -10,6 +10,8 @@ tests/
 config_example/
 .idea/
 errors/
+temp/
+temp_photos/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

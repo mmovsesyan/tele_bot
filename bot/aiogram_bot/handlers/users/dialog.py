@@ -1,3 +1,7 @@
+import html
+import os
+import uuid
+
 from aiogram import Bot, F, Router, types
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
@@ -11,7 +15,7 @@ from bot.database.requests.users import update_user
 from bot.texts import (AUTO_MODEL_CHANGED_TXT, DIALOG_ENDED_TXT,
                        DIALOG_STARTED_TXT, NO_REQUESTS_FOR_MODEL_TXT,
                        NO_REQUESTS_TXT, PLANS_BTN, START_MSG_FROM_AI_TXT,
-                       STOP_DIALOG_BTN, USE_PART_TXT)
+                       STOP_DIALOG_BTN, USE_PART_TXT, ERROR_TXT)
 from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT, OPENAI_MODEL, QWEN_MODEL
 from bot.utils.json_worker import get_plan_by_name
 from bot.utils.util import write_error, escape_markdown_v2
@@ -80,7 +84,7 @@ async def stop_dialog(message: types.Message, state: FSMContext, user: User):
     )
 
 
-@router.message(Dialog.message, F.text)
+@router.message(Dialog.message, F.text | F.photo | F.voice)
 async def dialog(message: types.Message, state: FSMContext, user: User):
     plan = await auto_change_model(user, message.bot, type_=1)
     if not plan:
@@ -91,18 +95,32 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         model = OPENAI_MODEL if user.current_model == 'gpt' else QWEN_MODEL
         if (user.user_id in ADMIN_IDS or user.is_admin) and user.current_model == "gpt":
             model = OPENAI_ADMIN_MODEL
-        print(model)
         max_tokens = plan["output_tokens"]
-        request = message.text
+        photo_path = None
+        fpath = 'temp'
+        os.makedirs(fpath, exist_ok=True)
+        if message.photo:
+            photo_path = os.path.abspath(os.path.join(fpath, uuid.uuid4().hex + '.jpg'))
+            await message.bot.download(message.photo[-1].file_id, photo_path)
+            request = message.caption or ''
+        elif message.voice:
+            voice_path = os.path.abspath(os.path.join(fpath, uuid.uuid4().hex + '.ogg'))
+            await message.bot.download(message.voice.file_id, voice_path)
+            temp_ai = AI['gpt']
+            request = await temp_ai.get_text(voice_path)
+            await message.reply(f"🎤 <i>{html.escape(request)}</i>", parse_mode="HTML")
+
+        else:
+            request = message.text
         data = await state.get_data()
         messages = data.get("messages", [])
         max_tokens = max_tokens if len(messages) == 0 else int((max_tokens * ((len(messages) / 2) + 1)))
         if user.user_id in ADMIN_IDS or user.is_admin:
             max_tokens = OPENAI_ADMIN_TOKEN_LIMIT
-        print(max_tokens)
         await message.bot.send_chat_action(message.chat.id, "typing")
-        answer, messages = await ai.generate(model, request, messages, max_tokens)
-        await message.answer(f"```\n{escape_markdown_v2(answer)}\n```", reply_markup=stop_dialog_keyboard, parse_mode=ParseMode.MARKDOWN_V2)
+        answer, messages = await ai.generate(model, request, messages, max_tokens, photo_path)
+        await message.answer(f"```\n{escape_markdown_v2(answer)}\n```", reply_markup=stop_dialog_keyboard,
+                             parse_mode=ParseMode.MARKDOWN_V2)
         if user.user_id not in ADMIN_IDS or not user.is_admin:
             user.request_remains[user.current_model] -= 1
 
@@ -110,6 +128,6 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         await state.update_data(messages=messages)
     except Exception as e:
         filename = write_error(e)
-        await message.answer("Произошла ошибка, попробуйте позже", reply_markup=get_main_menu(user))
+        await message.answer(ERROR_TXT, reply_markup=get_main_menu(user))
         await state.clear()
         return

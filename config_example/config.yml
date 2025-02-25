@@ -13,10 +13,15 @@ OPENAI_API_KEY: sk-proj-
 OPENAI_MODEL: gpt-4o-mini
 OPENAI_ADMIN_MODEL: gpt-4o
 OPENAI_ADMIN_TOKEN_LIMIT:
-
 QWEN_API_KEY: sk-
 QWEN_MODEL: qwen-max
+QWEN_IMAGE_MODEL: qwen-vl-plus
 
+GEN_VIDEO_API_KEY: YOUR_API_KEY
+GEN_VIDEO_ASPECT_RATIO: 16:9
+GEN_VIDEO_DURATION: 10
+
+CKASSA_MAIN_PROPERTY: ЛИЦЕВОЙ_СЧЕТ
 CKASSA_BASE_URL: https://demo-api2.ckassa.ru/api-shop
 ApiLoginAuthorization: 1a4c0d33-010c-4365-9c65-4c7f9bb415d5
 ApiAuthorization: 6a7abaad-2147-4646-b91a-435b5d97527b

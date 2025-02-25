@@ -45,10 +45,8 @@ class CKassa:
         }
         response = await self.client.post(
             "do/payment/anonymous",
-
             json=payload
         )
-        print(response.text)
         response.raise_for_status()
         return response.json()['payUrl']
 

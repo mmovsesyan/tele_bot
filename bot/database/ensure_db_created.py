@@ -22,3 +22,31 @@ def create_database(dbname, user, password, host="localhost", port="5432"):
         if connection:
             cursor.close()
             connection.close()
+
+
+
+
+def auto_migrates(dbname, user, password, host="localhost", port="5432"):
+    try:
+        conn = psycopg2.connect(
+            dbname=dbname,
+            user=user,
+            password=password,
+            host=host,
+            port=port
+        )
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN video_gens BIGINT DEFAULT 0;")
+            ...
+        except psycopg2.errors.DuplicateColumn:
+            ...
+        except Exception as e:
+            ...
+
+        cur.close()
+        conn.close()
+    except Exception as e:
+        ...

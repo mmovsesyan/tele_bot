@@ -55,11 +55,13 @@ def register_routers(dp: Dispatcher):
     from bot.aiogram_bot.handlers.admins import give_admin
     from bot.aiogram_bot.handlers.admins import upload_users
     from bot.aiogram_bot.handlers.users import get_offer
+    from bot.aiogram_bot.handlers.users import video_gen
     dp.include_routers(
         dialog.router,
+        menu.router,
         enter_promo.router,
         info.router,
-        menu.router,
+        video_gen.router,
         ref.router,
         settings.router,
         switch_autopayment.router,

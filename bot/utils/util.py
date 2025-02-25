@@ -7,6 +7,7 @@ from typing import List
 
 from openpyxl import Workbook
 
+from bot import converter
 from bot.database.models import User
 from bot.utils.config import ADMIN_IDS
 
@@ -34,7 +35,6 @@ def write_error(error: Exception):
         file.write(error_text)
 
     return filename
-
 
 def generate_users_xlsx(users: List[User]) -> BytesIO:
     output = BytesIO()
@@ -87,3 +87,14 @@ def format_datetime(dt: datetime) -> str:
 def escape_markdown_v2(text: str) -> str:
     escape_chars = r"\_*[]()~`>#+-=|{}.!<>"
     return "".join(f"\\{char}" if char in escape_chars else char for char in text)
+
+
+
+async def convert_to_usd(money, currency):
+    if money == 0:
+        return money
+    if currency == 'USD':
+        usd_count = await converter.get_price('USD', 'RUB', money)
+        return float(f"{usd_count:.2f}")
+    else:
+        raise ValueError
