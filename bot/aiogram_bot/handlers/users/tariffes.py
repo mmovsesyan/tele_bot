@@ -35,7 +35,7 @@ def get_txt_plans(json_file):
         if plan["price"] == 0:
             continue
 
-        txt_plans += f"{plan['emoji']} <b>Тариф \"{plan['name']}\"</b>\n  - Цена: {plan['price']} RUB / месяц\n  - Запросов в день: GPT {plan['day_reqs']['gpt']} запросов в день | Qwen {plan['day_reqs']['qwen']} запросов в день"
+        txt_plans += f"{plan['emoji']} <b>Тариф \"{plan['name']}\"</b>\n  - Цена: {plan['price']} RUB / месяц\n  - Запросов в день: GPT {plan['day_reqs']['gpt']} запросов в день | Qwen {plan['day_reqs']['qwen']} запросов в день | Claude {plan['day_reqs']['claude']} запросов в день"
         if i != len(json_file) - 1:
             txt_plans += "\n\n"
     return txt_plans
@@ -58,6 +58,7 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
             name,
             user.request_remains["gpt"],
             user.request_remains["qwen"],
+            user.request_remains["claude"],
             format_datetime(user.plan_due_to),
             user.video_gens,
             get_txt_plans(json_file),
@@ -67,6 +68,7 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
             name,
             user.request_remains["gpt"],
             user.request_remains["qwen"],
+            user.request_remains["claude"],
             user.video_gens,
             get_txt_plans(json_file),
         )

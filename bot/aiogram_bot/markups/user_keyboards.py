@@ -4,7 +4,7 @@ from bot.database.models import User
 from bot.texts import GET_OFFER_BTN, PLANS_BTN, START_DIALOG_BTN, ENTER_PROMO_BTN, REF_BTN, \
     ADMIN_JOIN_BTN, PLANS_BUY_PART_BTN, BACK_BTN, SETTINGS_BTN, CANCEL_BTN, BUY_BTN, CHOICED_MODEL_PART_TXT, \
     STOP_DIALOG_BTN, INFO_BTN, GPT_MODEL_BTN, QWEN_MODEL_BTN, VIDEO_GENERATION_BTN, BUY_VIDEO_JOIN_BTN, \
-    VIDEO_PLANS_BUY_PART_BTN
+    VIDEO_PLANS_BUY_PART_BTN, CLAUDE_MODEL_BTN
 from bot.utils.config import ADMIN_IDS
 
 
@@ -67,11 +67,13 @@ def get_confirm_kbd(plan_uid):
 
 
 def get_settings_kbd(user: User):
-    gpt_text = f"{'' if user.current_model == 'qwen' else CHOICED_MODEL_PART_TXT}" + GPT_MODEL_BTN
-    qwen_text = f"{'' if user.current_model == 'gpt' else CHOICED_MODEL_PART_TXT}" + QWEN_MODEL_BTN
+    gpt_text = f"{CHOICED_MODEL_PART_TXT if user.current_model == 'gpt' else ''}" + GPT_MODEL_BTN
+    qwen_text = f"{CHOICED_MODEL_PART_TXT if user.current_model == 'qwen' else ''}" + QWEN_MODEL_BTN
+    claude_text = f"{CHOICED_MODEL_PART_TXT if user.current_model == 'claude' else ''}" + CLAUDE_MODEL_BTN
     confirmation_keyboard = types.InlineKeyboardMarkup(inline_keyboard=[
         [types.InlineKeyboardButton(text=gpt_text, callback_data=f"change_model_to:gpt"),
-         types.InlineKeyboardButton(text=qwen_text, callback_data="change_model_to:qwen")],
+         types.InlineKeyboardButton(text=qwen_text, callback_data="change_model_to:qwen"),
+         types.InlineKeyboardButton(text=claude_text, callback_data="change_model_to:claude")],
         [types.InlineKeyboardButton(text=BACK_BTN, callback_data=f"main_menu")],
     ])
     return confirmation_keyboard

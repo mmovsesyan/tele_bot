@@ -16,7 +16,8 @@ from bot.texts import (AUTO_MODEL_CHANGED_TXT, DIALOG_ENDED_TXT,
                        DIALOG_STARTED_TXT, NO_REQUESTS_FOR_MODEL_TXT,
                        NO_REQUESTS_TXT, PLANS_BTN, START_MSG_FROM_AI_TXT,
                        STOP_DIALOG_BTN, USE_PART_TXT, ERROR_TXT)
-from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT, OPENAI_MODEL, QWEN_MODEL
+from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT, OPENAI_MODEL, QWEN_MODEL, \
+    ANTHROPIC_MODEL
 from bot.utils.json_worker import get_plan_by_name
 from bot.utils.util import write_error, escape_markdown_v2
 
@@ -42,7 +43,7 @@ async def auto_change_model(user: User, bot: Bot, type_: int):
             parse_mode="HTML",
             reply_markup=types.ReplyKeyboardRemove(),
         )
-        if user.current_model == "gpt" and user.request_remains["qwen"] > 0:
+        if user.current_model in ["gpt", 'claude'] and user.request_remains["qwen"] > 0:
             await update_user(user.user_id, current_model="qwen")
             user.current_model = "qwen"
             ai = AI[user.current_model]
@@ -92,7 +93,15 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         return
     try:
         ai = AI[user.current_model]
-        model = OPENAI_MODEL if user.current_model == 'gpt' else QWEN_MODEL
+
+        if user.current_model == 'gpt':
+            model = OPENAI_MODEL
+        elif user.current_model == 'qwen':
+            model = QWEN_MODEL
+        elif user.current_model == 'claude':
+            model = ANTHROPIC_MODEL
+        else:
+            return
         if (user.user_id in ADMIN_IDS or user.is_admin) and user.current_model == "gpt":
             model = OPENAI_ADMIN_MODEL
         max_tokens = plan["output_tokens"]
