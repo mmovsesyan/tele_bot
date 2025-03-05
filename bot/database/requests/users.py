@@ -94,3 +94,28 @@ async def add_videos(user_id: int, videos: int):
             if result.rowcount == 0:
                 return False
             return True
+
+
+
+async def minus_image(user_id: int):
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(
+                update(User)
+                .where(User.user_id == user_id, User.image_gens > 0)
+                .values(image_gens=User.image_gens - 1)
+            )
+            if result.rowcount == 0:
+                return False
+            return True
+async def add_images(user_id: int, images: int):
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(
+                update(User)
+                .where(User.user_id == user_id)
+                .values(image_gens=User.image_gens + images)
+            )
+            if result.rowcount == 0:
+                return False
+            return True

@@ -1,0 +1,23 @@
+[
+    {
+        "uid": "0",
+        "usd_price": 0.7,
+        "images": 1
+    },
+
+    {
+        "uid": "1",
+        "usd_price": 3.5,
+        "images": 5
+    },
+    {
+        "uid": "2",
+        "usd_price": 7,
+        "images": 10
+    },
+    {
+        "uid": "2",
+        "usd_price": 14,
+        "images": 20
+    }
+]

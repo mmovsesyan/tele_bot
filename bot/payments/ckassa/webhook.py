@@ -7,8 +7,8 @@ from functools import partial
 from bot import json_worker
 from bot.aiogram_bot.markups.user_keyboards import get_main_menu
 from bot.database.requests.logs import add_log
-from bot.database.requests.users import get_user, add_videos
-from bot.texts import PAYMENT_SUCCEED_TXT, VIDEO_PAYMENT_SUCCEED_TXT
+from bot.database.requests.users import get_user, add_videos, add_images
+from bot.texts import PAYMENT_SUCCEED_TXT, VIDEO_PAYMENT_SUCCEED_TXT, IMAGE_PAYMENT_SUCCEED_TXT
 from bot.utils.config import CKASSA_WEBHOOKS_PORT, CKASSA_MAIN_PROPERTY
 from bot.utils.plans_worker import give_plan
 from bot.utils.util import write_error
@@ -29,19 +29,9 @@ async def handle_webhook(request, bot):
             if data['state'] != 'PAYED':
                 return web.json_response({"status": "success"}, status=200)
             dat = data['property'][CKASSA_MAIN_PROPERTY]
-            if not dat.startswith("v:"):
-                id_, plan_name, _ = dat.split(':')
-                user_id_ = int(id_)
-                p = plan_name
-                date_to = (datetime.now() + timedelta(days=30)).strftime('%d.%m.%Y')
-                plan = await give_plan(id_, p, date_to)
-                user = await get_user(user_id_)
-                try:
-                    await bot.send_message(user_id_, PAYMENT_SUCCEED_TXT.format(plan['name'], plan['emoji'], date_to), parse_mode='HTML', reply_markup=get_main_menu(user))
-                except Exception as e:
-                    write_error(e)
-                    await add_log(user_id=user_id_, message=f"Ошибка при отправке сообщения пользователю", data=str(e))
-            else:
+
+
+            if dat.startswith("v:"):
                 _, id_, plan_uid = dat.split(':')
                 user_id_ = int(id_)
 
@@ -55,6 +45,33 @@ async def handle_webhook(request, bot):
                 except Exception as e:
                     write_error(e)
                     await add_log(user_id=user_id_, message=f"Ошибка при отправке сообщения пользователю", data=str(e))
+            elif dat.startswith("i:"):
+                _, id_, plan_uid = dat.split(':')
+                user_id_ = int(id_)
+
+                json_plans = await json_worker.read("config/image_plans.json")
+                plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
+                images_to_give = plan['images']
+                await add_images(user_id_, images_to_give)
+                user = await get_user(user_id_)
+                try:
+                    await bot.send_message(user_id_, IMAGE_PAYMENT_SUCCEED_TXT.format(plan['images']), parse_mode='HTML', reply_markup=get_main_menu(user))
+                except Exception as e:
+                    write_error(e)
+                    await add_log(user_id=user_id_, message=f"Ошибка при отправке сообщения пользователю", data=str(e))
+            else:
+                id_, plan_name, _ = dat.split(':')
+                user_id_ = int(id_)
+                p = plan_name
+                date_to = (datetime.now() + timedelta(days=30)).strftime('%d.%m.%Y')
+                plan = await give_plan(id_, p, date_to)
+                user = await get_user(user_id_)
+                try:
+                    await bot.send_message(user_id_, PAYMENT_SUCCEED_TXT.format(plan['name'], plan['emoji'], date_to), parse_mode='HTML', reply_markup=get_main_menu(user))
+                except Exception as e:
+                    write_error(e)
+                    await add_log(user_id=user_id_, message=f"Ошибка при отправке сообщения пользователю", data=str(e))
+
         except Exception as e:
             write_error(e)
             try:

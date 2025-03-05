@@ -4,7 +4,8 @@ import openai
 from openai import AsyncOpenAI
 
 from bot.texts import GPT_TXT, QWEN_TXT
-from bot.utils.config import AI_PROMPT, GPT_PLUS_PROMPT, QWEN_IMAGE_MODEL
+from bot.utils.config import AI_PROMPT, GPT_PLUS_PROMPT, QWEN_IMAGE_MODEL, GEN_IMAGE_MODEL, GEN_IMAGE_SIZE, \
+    GEN_IMAGE_QUALITY
 
 
 def encode_image(image_path):
@@ -74,3 +75,14 @@ class GPT:
                 file=audio_file,
             )
             return transcript.text
+
+    async def gen_image(self, prompt: str):
+        response = await self.client.images.generate(
+            model=GEN_IMAGE_MODEL,
+            prompt=prompt,
+            size=GEN_IMAGE_SIZE,
+            quality=GEN_IMAGE_QUALITY,
+            n=1,
+        )
+        image_url = response.data[0].url
+        return image_url

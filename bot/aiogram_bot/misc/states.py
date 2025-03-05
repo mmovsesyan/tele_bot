@@ -42,3 +42,6 @@ class GetInfo(StatesGroup):
 
 class VideoGeneration(StatesGroup):
     prompt = State()
+
+class ImageGeneration(StatesGroup):
+    prompt = State()

@@ -130,7 +130,7 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         answer, messages = await ai.generate(model, request, messages, max_tokens, photo_path)
         await message.answer(f"```\n{escape_markdown_v2(answer)}\n```", reply_markup=stop_dialog_keyboard,
                              parse_mode=ParseMode.MARKDOWN_V2)
-        if user.user_id not in ADMIN_IDS or not user.is_admin:
+        if user.user_id not in ADMIN_IDS and not user.is_admin:
             user.request_remains[user.current_model] -= 1
 
         await update_user(user.user_id, request_remains=user.request_remains)

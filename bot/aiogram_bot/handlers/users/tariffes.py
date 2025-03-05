@@ -8,7 +8,7 @@ from bot.aiogram_bot.markups.user_keyboards import (
     generate_plans_kbd,
     get_confirm_kbd,
     get_main_menu,
-    cancel_keyboard, generate_video_plans_kbd,
+    cancel_keyboard, vid_img_plans_kbd,
 )
 from bot.aiogram_bot.misc.states import BuyPlan
 from bot.database.models import User
@@ -21,6 +21,7 @@ from bot.texts import (
     PAYMENT_CONFIRMATION_TXT,
     USE_PART_TXT,
     PLANS_PART_2_TXT, VIDEO_PLANS_TXT, VIDEO_PAYMENT_CONFIRMATION_TXT, TO_BUY_VIDEO_GO_LINK_TXT,
+    IMAGE_PAYMENT_SUCCEED_TXT, TO_BUY_IMAGE_GO_LINK_TXT, IMAGE_PLANS_TXT, IMAGE_PAYMENT_CONFIRMATION_TXT,
 )
 from bot.utils.config import CKASSA_MAIN_PROPERTY
 from bot.utils.json_worker import get_plan_by_name
@@ -60,7 +61,7 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
             user.request_remains["qwen"],
             user.request_remains["claude"],
             format_datetime(user.plan_due_to),
-            user.video_gens,
+            user.image_gens,
             get_txt_plans(json_file),
         )
     else:
@@ -69,7 +70,7 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
             user.request_remains["gpt"],
             user.request_remains["qwen"],
             user.request_remains["claude"],
-            user.video_gens,
+            user.image_gens,
             get_txt_plans(json_file),
         )
 
@@ -80,6 +81,7 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
 
 @router.callback_query(lambda c: c.data and c.data.startswith("plan_"))
 @router.callback_query(lambda c: c.data and c.data.startswith("video_plan:"))
+@router.callback_query(lambda c: c.data and c.data.startswith("image_plan:"))
 async def select_plan(call: types.CallbackQuery, state: FSMContext, user: User):
     if call.data.startswith("plan_"):
         type_ = 'default'
@@ -89,11 +91,18 @@ async def select_plan(call: types.CallbackQuery, state: FSMContext, user: User):
         answer_txt = PAYMENT_CONFIRMATION_TXT.format(plan["name"], plan["price"])
 
     elif call.data.startswith("video_plan:"):
+        return # TODO: TEMPORARY
         type_ = 'video'
         plan_uid = call.data.split(":")[1]
         json_plans = await json_worker.read("config/video_plans.json")
         plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
         answer_txt = VIDEO_PAYMENT_CONFIRMATION_TXT.format(plan["videos"], plan["usd_price"])
+    elif call.data.startswith("image_plan:"):
+        type_ = 'image'
+        plan_uid = call.data.split(":")[1]
+        json_plans = await json_worker.read("config/image_plans.json")
+        plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
+        answer_txt = IMAGE_PAYMENT_CONFIRMATION_TXT.format(plan["images"], plan["usd_price"])
     if not plan:
         await call.answer("Неверный тариф")
         return
@@ -125,7 +134,10 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
     if type_ == 'default':
         json_plans = await json_worker.read("config/plans.json")
     elif type_ == 'video':
+        return # TODO: TEMPORARY
         json_plans = await json_worker.read("config/video_plans.json")
+    elif type_ == 'image':
+        json_plans = await json_worker.read("config/image_plans.json")
 
     plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
     if type_ == 'default':
@@ -134,6 +146,9 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
     elif type_ == 'video':
         price = await convert_to_usd(plan['usd_price'], 'USD')
         desc = f"v:{user.user_id}:{plan['uid']}"
+    elif type_ == 'image':
+        price = await convert_to_usd(plan['usd_price'], 'USD')
+        desc = f"i:{user.user_id}:{plan['uid']}"
 
     if not plan:
         await call.answer(INCORRECT_PAYMENT_TXT, show_alert=True)
@@ -157,6 +172,10 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
         elif type_ == 'video':
             answer_txt = TO_BUY_VIDEO_GO_LINK_TXT.format(
                 plan["videos"], price, payment_link
+            )
+        elif type_ == 'image':
+            answer_txt = TO_BUY_IMAGE_GO_LINK_TXT.format(
+                plan["images"], price, payment_link
             )
     except Exception as e:
         write_error(e)
@@ -185,4 +204,15 @@ async def video_buy_join(call: types.CallbackQuery, state: FSMContext):
     for el in json_file:
         plans.append(f'👉 <b>{el['videos']} видео</b> за {el['usd_price']} USD')
     final_txt = VIDEO_PLANS_TXT + '\n'.join(plans)
-    await call.message.answer(final_txt, parse_mode='HTML', reply_markup=generate_video_plans_kbd(json_file))
+    await call.message.answer(final_txt, parse_mode='HTML', reply_markup=vid_img_plans_kbd(json_file, 'video_plan', 'videos'))
+
+@router.callback_query(F.data == "image_buy")
+async def image_buy_join(call: types.CallbackQuery, state: FSMContext):
+    await call.message.delete_reply_markup()
+
+    json_file = await json_worker.read("config/image_plans.json")
+    plans = []
+    for el in json_file:
+        plans.append(f'👉 <b>{el['images']} изображений</b> за {el['usd_price']} USD')
+    final_txt = IMAGE_PLANS_TXT + '\n'.join(plans)
+    await call.message.answer(final_txt, parse_mode='HTML', reply_markup=vid_img_plans_kbd(json_file, 'image_plan', 'images'))

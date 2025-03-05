@@ -46,6 +46,15 @@ def auto_migrates(dbname, user, password, host="localhost", port="5432"):
         except Exception as e:
             ...
 
+
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN image_gens BIGINT DEFAULT 0;")
+            ...
+        except psycopg2.errors.DuplicateColumn:
+            ...
+        except Exception as e:
+            ...
+
         cur.close()
         conn.close()
     except Exception as e:

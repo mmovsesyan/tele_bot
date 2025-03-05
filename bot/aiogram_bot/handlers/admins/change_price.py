@@ -17,10 +17,13 @@ include_middlewares(router, admin_middleware)
 
 @router.callback_query(F.data == "change_prices")
 @router.callback_query(F.data == "video_change_prices")
+@router.callback_query(F.data == "image_change_prices")
 async def change_prices(call: types.CallbackQuery, state: FSMContext):
     data = call.data
     if data == "video_change_prices":
         await call.message.answer_document(FSInputFile('config/video_plans.json'), caption=ADM_CURRENT_PRICES_TXT)
+    elif data == "image_change_prices":
+        await call.message.answer_document(FSInputFile('config/image_plans.json'), caption=ADM_CURRENT_PRICES_TXT)
     else:
         await call.message.answer_document(FSInputFile('config/plans.json'), caption=ADM_CURRENT_PRICES_TXT)
 
@@ -43,6 +46,8 @@ async def change_prices_2(message: types.Message, state: FSMContext):
 
     if data.get("type_") == "change_prices":
         await json_worker.write(filename_path, 'config/plans.json')
+    elif data.get("type_") == "image_change_prices":
+        await json_worker.write(filename_path, 'config/image_plans.json')
     else:
         await json_worker.write(filename_path, 'config/video_plans.json')
 
