@@ -78,19 +78,16 @@ def write_config(config_dir: Path, data: dict):
         f"OLLAMA_CLAUDE_MODEL: {data['ollama_claude_model']}",
         f"OLLAMA_ADMIN_MODEL: {data['ollama_admin_model']}",
         "",
-        "# OpenAI (только для генерации изображений и Whisper)",
+        "# OpenAI (только для Whisper)",
         f"OPENAI_API_KEY: {data['openai_api_key']}",
-        f"OPENAI_MODEL: {data['openai_model']}",
         f"OPENAI_ADMIN_MODEL: {data['openai_admin_model']}",
         f"OPENAI_ADMIN_TOKEN_LIMIT: {data['openai_admin_token_limit']}",
         "",
         "# Qwen legacy (оставлено для совместимости конфига)",
         f"QWEN_API_KEY: {data['qwen_api_key']}",
-        f"QWEN_MODEL: {data['qwen_model']}",
         "",
         "# Anthropic legacy (оставлено для совместимости конфига)",
         f"ANTHROPIC_API_KEY: {data['anthropic_api_key']}",
-        f"ANTHROPIC_MODEL: {data['anthropic_model']}",
         "",
         "# Системные настройки",
         f"TIMEZONE: {data['timezone']}",
@@ -172,15 +169,12 @@ def main():
 
     print("\n--- OpenAI (только для Whisper) ---")
     openai_api_key = ask("OpenAI API Key", "sk-proj-")
-    openai_model = ask("OpenAI модель", "gpt-4o-mini")
     openai_admin_model = ask("OpenAI админ модель", "gpt-4o")
     openai_admin_token_limit = ask("OpenAI лимит токенов для админа", "")
 
     print("\n--- Legacy keys (оставьте пустыми если не нужны) ---")
     qwen_api_key = ask("Qwen API Key", "")
-    qwen_model = ask("Qwen модель", "qwen-max")
     anthropic_api_key = ask("Anthropic API Key", "")
-    anthropic_model = ask("Anthropic модель", "claude-3-7-sonnet-20250219")
 
     print("\n--- Системные настройки ---")
     timezone = ask("Таймзона", "Europe/Moscow")
@@ -202,13 +196,10 @@ def main():
         "ollama_claude_model": ollama_claude_model,
         "ollama_admin_model": ollama_admin_model,
         "openai_api_key": openai_api_key,
-        "openai_model": openai_model,
         "openai_admin_model": openai_admin_model,
         "openai_admin_token_limit": openai_admin_token_limit,
         "qwen_api_key": qwen_api_key,
-        "qwen_model": qwen_model,
         "anthropic_api_key": anthropic_api_key,
-        "anthropic_model": anthropic_model,
         "timezone": timezone,
     }
 
