@@ -119,6 +119,21 @@ tele_bot/
 └── main.py                    # Точка входа
 ```
 
+## Тесты
+
+```bash
+pip install -r requirements_linux.txt
+python3 -m pytest tests/ -v
+```
+
+Покрытие:
+- AI-провайдеры (GPT с Ollama Cloud)
+- JSON-работник и тарифные планы
+- Утилиты (даты, экранирование Markdown)
+- Работа с заявками на тарифы (CRUD + одобрение/отклонение)
+- Логика выдачи планов (12 часов free / 30 дней paid)
+- Модели БД (User, PlanRequest)
+
 ## Полезные команды
 
 | Команда | Описание |
@@ -128,6 +143,7 @@ tele_bot/
 | `python make_db_recovery.py` | Бэкап PostgreSQL |
 | `docker compose up --build` | Запуск в Docker |
 | `docker compose down -v` | Полная очистка (с БД) |
+| `python3 -m pytest tests/ -v` | Запуск тестов |
 
 ## Модели Ollama Cloud (по умолчанию)
 

@@ -10,3 +10,7 @@ openai
 openpyxl
 
 psycopg2-binary
+
+pytest
+pytest-asyncio
+greenlet

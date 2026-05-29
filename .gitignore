@@ -6,7 +6,6 @@ task.txt
 documents/
 backups/
 config/
-tests/
 #config_example/
 .idea/
 errors/
