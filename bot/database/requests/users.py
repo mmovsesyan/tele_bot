@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Union
 
 from sqlalchemy import select, update, func
@@ -22,8 +23,13 @@ async def add_user(user_id: int, **kwargs) -> User:
         try:
             user = await session.scalar(select(User).where(User.user_id == user_id))
             if not user:
+                free_plan = get_plan_by_name(plans, 'free')
                 kwargs['plan'] = 'free'
-                kwargs['request_remains'] = get_plan_by_name(plans,'free')['day_reqs']
+                kwargs['request_remains'] = free_plan['day_reqs']
+                if 'duration_hours' in free_plan:
+                    kwargs['plan_due_to'] = datetime.now() + timedelta(hours=int(free_plan['duration_hours']))
+                else:
+                    kwargs['plan_due_to'] = datetime.now() + timedelta(days=int(free_plan.get('duration_days', 1)))
                 user = User(user_id=user_id, **kwargs)
                 session.add(user)
                 await session.flush()

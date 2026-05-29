@@ -2,20 +2,17 @@ from bot.ai.anthropic_ai import AnthropicAI
 from bot.ai.gpt import GPT
 from bot.ai.qwen import Qwen
 from bot.ai.veo import VeoAPI
-from bot.payments.ckassa.app import CKassa
-from bot.utils.config import OPENAI_API_KEY, OPENAI_MODEL, QWEN_API_KEY, QWEN_MODEL, CKASSA_BASE_URL, \
-    CKASSA_WEBHOOKS_URL, GEN_VIDEO_API_KEY, ANTHROPIC_API_KEY
+from bot.utils.config import GEN_VIDEO_API_KEY, OPENAI_API_KEY, OLLAMA_API_KEY, OLLAMA_BASE_URL
 from bot.utils.converter import CurrencyConverter
 from bot.utils.json_worker import AsyncJsonHandler
 
 AI = {
-    'gpt': GPT(OPENAI_API_KEY),
-    'qwen': Qwen(QWEN_API_KEY, "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"),
-
-    'claude': AnthropicAI(ANTHROPIC_API_KEY, 'https://api.anthropic.com/v1/')
+    'gpt': GPT(OLLAMA_API_KEY, OLLAMA_BASE_URL),
+    'qwen': Qwen(OLLAMA_API_KEY, OLLAMA_BASE_URL),
+    'claude': AnthropicAI(OLLAMA_API_KEY, OLLAMA_BASE_URL)
 }
 
-ckassa = CKassa(CKASSA_BASE_URL, CKASSA_WEBHOOKS_URL)
+image_ai = GPT(OPENAI_API_KEY)
 
 veoapi = VeoAPI(GEN_VIDEO_API_KEY)
 

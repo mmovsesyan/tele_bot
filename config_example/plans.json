@@ -3,58 +3,38 @@
         "uid": "free",
         "name": "Бесплатный",
         "price": 0,
+        "duration_hours": 12,
         "day_reqs": {
-            "gpt": 4,
-            "claude": 4,
-            "qwen": 0
+            "gpt": 5,
+            "claude": 5,
+            "qwen": 5
         },
         "output_tokens": 150
     },
     {
-        "uid": "trial",
-        "name": "Пробный",
-        "price": 0,
-        "day_reqs": {
-            "gpt": 10,
-            "claude": 10,
-            "qwen": 20
-        },
-        "output_tokens": 100
-    },
-    {
-        "uid": "usual",
-        "name": "Базовый",
-        "price": 560,
-        "day_reqs": {
-            "gpt": 7,
-            "claude": 7,
-            "qwen": 20
-        },
-        "output_tokens": 150,
-        "emoji": "⚡"
-    },
-    {
-        "uid": "standart",
+        "uid": "standard",
         "name": "Стандарт",
-        "price": 1200,
+        "price": 300,
+        "duration_days": 30,
         "day_reqs": {
             "gpt": 15,
             "claude": 15,
-            "qwen": 20
+            "qwen": 15
         },
-        "output_tokens": 2,
+        "output_tokens": 300,
         "emoji": "🔥"
     },
     {
         "uid": "premium",
         "name": "Премиум",
-        "price": 2500,
+        "price": 600,
+        "duration_days": 30,
         "day_reqs": {
-            "gpt": 25,
-            "claude": 25,
-            "qwen": 20
+            "gpt": 30,
+            "claude": 30,
+            "qwen": 30
         },
-        "output_tokens": 300,
+        "output_tokens": 500,
         "emoji": "💎"
     }
 ]

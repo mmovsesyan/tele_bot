@@ -9,7 +9,6 @@ from bot.aiogram_bot.handlers.admins import mass_send
 from bot.aiogram_bot.misc.create_commands import create_bot_commands
 from bot.aiogram_bot.misc.middlewares import register_middlewares
 from bot.database.models import on_startup_database
-from bot.payments.ckassa.webhook import init_webhook_app
 from bot.utils.config import TG_TOKEN, REDIS_HOST, REDIS_DB
 from bot.utils.db_recovery import schedule_backup
 from bot.utils.invited_this_m_worker import check_time_invited_m
@@ -27,7 +26,6 @@ async def aiogram_on_startup(bot: Bot):
     except:
         ...
     asyncio.create_task(schedule_tariff_check())
-    asyncio.create_task(init_webhook_app(bot))
     asyncio.create_task(check_time_invited_m())
     asyncio.create_task(schedule_backup())
     logging.info("Bot has been started! -> @" + str(bot_info.username))
@@ -54,15 +52,14 @@ def register_routers(dp: Dispatcher):
     from bot.aiogram_bot.handlers.admins import get_info
     from bot.aiogram_bot.handlers.admins import give_admin
     from bot.aiogram_bot.handlers.admins import upload_users
+    from bot.aiogram_bot.handlers.admins import plan_requests
     from bot.aiogram_bot.handlers.users import get_offer
-    from bot.aiogram_bot.handlers.users import video_gen
     from bot.aiogram_bot.handlers.users import image_gen
     dp.include_routers(
         dialog.router,
         menu.router,
         enter_promo.router,
         info.router,
-        # video_gen.router,
         image_gen.router,
         ref.router,
         settings.router,
@@ -79,6 +76,7 @@ def register_routers(dp: Dispatcher):
         mass_send.router,
         stats.router,
         upload_users.router,
+        plan_requests.router,
     )
 
 

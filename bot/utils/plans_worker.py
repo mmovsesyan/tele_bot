@@ -15,7 +15,10 @@ async def give_plan(user_id: int, p, date_to: str):
     json_ = await json_worker.read('config/plans.json')
     plan = get_plan_by_name(json_, p)
     if not date_to:
-        date_to = datetime.now() + timedelta(days=30)
+        if 'duration_hours' in plan:
+            date_to = datetime.now() + timedelta(hours=int(plan['duration_hours']))
+        else:
+            date_to = datetime.now() + timedelta(days=int(plan.get('duration_days', 30)))
     elif date_to == 'del':
         date_to = None
     else:
@@ -47,9 +50,12 @@ async def check_tariff_updates():
         try:
             if user.plan_due_to is None:
                 continue
-            if now > user.plan_due_to.replace(tzinfo=TIMEZONE) and user.plan != 'free':
-                free_plan = "free"
-                await give_plan(user.user_id, free_plan, 'del')
+            if now > user.plan_due_to.replace(tzinfo=TIMEZONE):
+                if user.plan != 'free':
+                    await give_plan(user.user_id, "free", None)
+                else:
+                    # free expired — do not refresh requests
+                    continue
             else:
                 await refresh_requests(user)
         except Exception as e:

@@ -6,7 +6,7 @@ from aiogram import Bot, F, Router, types
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 
-from bot import AI, json_worker
+from bot import AI, image_ai, json_worker
 from bot.aiogram_bot.markups.user_keyboards import (get_main_menu,
                                                     stop_dialog_keyboard)
 from bot.aiogram_bot.misc.states import Dialog
@@ -16,8 +16,8 @@ from bot.texts import (AUTO_MODEL_CHANGED_TXT, DIALOG_ENDED_TXT,
                        DIALOG_STARTED_TXT, NO_REQUESTS_FOR_MODEL_TXT,
                        NO_REQUESTS_TXT, PLANS_BTN, START_MSG_FROM_AI_TXT,
                        STOP_DIALOG_BTN, USE_PART_TXT, ERROR_TXT)
-from bot.utils.config import ADMIN_IDS, OPENAI_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT, OPENAI_MODEL, QWEN_MODEL, \
-    ANTHROPIC_MODEL
+from bot.utils.config import ADMIN_IDS, OLLAMA_ADMIN_MODEL, OPENAI_ADMIN_TOKEN_LIMIT, OLLAMA_GPT_MODEL, OLLAMA_QWEN_MODEL, \
+    OLLAMA_CLAUDE_MODEL
 from bot.utils.json_worker import get_plan_by_name
 from bot.utils.util import write_error, escape_markdown_v2
 
@@ -95,15 +95,15 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         ai = AI[user.current_model]
 
         if user.current_model == 'gpt':
-            model = OPENAI_MODEL
+            model = OLLAMA_GPT_MODEL
         elif user.current_model == 'qwen':
-            model = QWEN_MODEL
+            model = OLLAMA_QWEN_MODEL
         elif user.current_model == 'claude':
-            model = ANTHROPIC_MODEL
+            model = OLLAMA_CLAUDE_MODEL
         else:
             return
         if (user.user_id in ADMIN_IDS or user.is_admin) and user.current_model == "gpt":
-            model = OPENAI_ADMIN_MODEL
+            model = OLLAMA_ADMIN_MODEL
         max_tokens = plan["output_tokens"]
         photo_path = None
         fpath = 'temp'
@@ -115,8 +115,7 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         elif message.voice:
             voice_path = os.path.abspath(os.path.join(fpath, uuid.uuid4().hex + '.ogg'))
             await message.bot.download(message.voice.file_id, voice_path)
-            temp_ai = AI['gpt']
-            request = await temp_ai.get_text(voice_path)
+            request = await image_ai.get_text(voice_path)
             await message.reply(f"🎤 <i>{html.escape(request)}</i>", parse_mode="HTML")
 
         else:

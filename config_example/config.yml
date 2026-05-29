@@ -19,6 +19,13 @@ QWEN_IMAGE_MODEL: qwen-vl-plus
 ANTHROPIC_API_KEY: sk-ant-api03-
 ANTHROPIC_MODEL: claude-3-7-sonnet-20250219
 
+OLLAMA_API_KEY: sk-ollama-
+OLLAMA_BASE_URL: https://api.ollama.com/v1
+OLLAMA_GPT_MODEL: gpt-oss:20b-cloud
+OLLAMA_QWEN_MODEL: qwen3.5:cloud
+OLLAMA_CLAUDE_MODEL: qwen3-coder-next:cloud
+OLLAMA_ADMIN_MODEL: kimi-k2.6:cloud
+
 GEN_VIDEO_API_KEY: YOUR_API_KEY
 GEN_VIDEO_ASPECT_RATIO: 16:9
 GEN_VIDEO_DURATION: 10
@@ -26,15 +33,6 @@ GEN_VIDEO_DURATION: 10
 GEN_IMAGE_MODEL: dall-e-3
 GEN_IMAGE_SIZE: 1024x1024
 GEN_IMAGE_QUALITY: standard
-
-
-CKASSA_MAIN_PROPERTY: ЛИЦЕВОЙ_СЧЕТ
-CKASSA_BASE_URL: https://demo-api2.ckassa.ru/api-shop
-ApiLoginAuthorization: 1a4c0d33-010c-4365-9c65-4c7f9bb415d5
-ApiAuthorization: 6a7abaad-2147-4646-b91a-435b5d97527b
-servCode: 1000-13864-2
-CKASSA_WEBHOOKS_URL: https://WEBSITE.COM/pay/ckassa
-CKASSA_WEBHOOKS_PORT: 80
 
 TIMEZONE: Europe/Moscow
 

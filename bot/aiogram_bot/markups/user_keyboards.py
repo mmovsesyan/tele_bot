@@ -40,7 +40,6 @@ def generate_plans_kbd(json_data):
         _kbd.append([types.InlineKeyboardButton(text=PLANS_BUY_PART_BTN.format(plan['name'], plan['price']),
                                                 callback_data=f"plan_{plan['uid']}")])
     _kbd.append([types.InlineKeyboardButton(text=BUY_IMAGE_JOIN_BTN, callback_data="image_buy")])
-    # _kbd.append([types.InlineKeyboardButton(text=BUY_VIDEO_JOIN_BTN, callback_data="video_buy")])
     _kbd.append([types.InlineKeyboardButton(text=BACK_BTN, callback_data="main_menu")])
     plans_keyboard = types.InlineKeyboardMarkup(
         inline_keyboard=_kbd

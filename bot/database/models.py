@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 
 from sqlalchemy import BigInteger, DateTime, Boolean, JSON
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
@@ -62,6 +63,17 @@ class Log(Base):
     user_id = mapped_column(BigInteger, nullable=True)
     message: Mapped[str] = mapped_column()
     data: Mapped[str] = mapped_column()
+
+
+class PlanRequest(Base):
+    __tablename__ = 'plan_requests'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id = mapped_column(BigInteger)
+    plan_uid: Mapped[str] = mapped_column()
+    type_: Mapped[str] = mapped_column(default='default')
+    status: Mapped[str] = mapped_column(default='pending')
+    created_at = mapped_column(DateTime(), default=datetime.utcnow)
 
 
 async def on_startup_database():

@@ -1,7 +1,7 @@
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from bot import veoapi, AI
+from bot import veoapi, image_ai
 from bot.aiogram_bot.markups.user_keyboards import cancel_keyboard, get_main_menu
 from bot.aiogram_bot.misc.states import VideoGeneration, ImageGeneration
 from bot.database.models import User
@@ -33,8 +33,7 @@ async def image_generation_2(message: types.Message, state: FSMContext, user: Us
         if not (user.user_id in ADMIN_IDS or user.is_admin):
 
             await minus_image(user.user_id)
-        ai = AI['gpt']
-        image_url = await ai.gen_image(prompt)
+        image_url = await image_ai.gen_image(prompt)
         await message.reply_photo(image_url)
         await message.answer(
             USE_PART_TXT, parse_mode="HTML", reply_markup=get_main_menu(user)
