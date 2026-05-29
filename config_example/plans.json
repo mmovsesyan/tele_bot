@@ -14,7 +14,7 @@
     {
         "uid": "standard",
         "name": "Стандарт",
-        "price": 300,
+        "price": 1000,
         "duration_days": 30,
         "day_reqs": {
             "gpt": 15,
@@ -27,7 +27,7 @@
     {
         "uid": "premium",
         "name": "Премиум",
-        "price": 600,
+        "price": 2000,
         "duration_days": 30,
         "day_reqs": {
             "gpt": 30,
