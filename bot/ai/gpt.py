@@ -4,8 +4,7 @@ import openai
 from openai import AsyncOpenAI
 
 from bot.texts import GPT_TXT, QWEN_TXT
-from bot.utils.config import AI_PROMPT, GPT_PLUS_PROMPT, QWEN_IMAGE_MODEL, GEN_IMAGE_MODEL, GEN_IMAGE_SIZE, \
-    GEN_IMAGE_QUALITY
+from bot.utils.config import AI_PROMPT, GPT_PLUS_PROMPT
 
 
 def encode_image(image_path):
@@ -46,10 +45,6 @@ class GPT:
         else:
             messages.append({"role": "user", "content": prompt})
 
-        if self.name == QWEN_TXT:
-            for m in messages:
-                if isinstance(m['content'], list):
-                    model = QWEN_IMAGE_MODEL
         if not max_tokens:
             response = await self.client.chat.completions.create(
                 model=model,
@@ -76,13 +71,3 @@ class GPT:
             )
             return transcript.text
 
-    async def gen_image(self, prompt: str):
-        response = await self.client.images.generate(
-            model=GEN_IMAGE_MODEL,
-            prompt=prompt,
-            size=GEN_IMAGE_SIZE,
-            quality=GEN_IMAGE_QUALITY,
-            n=1,
-        )
-        image_url = response.data[0].url
-        return image_url

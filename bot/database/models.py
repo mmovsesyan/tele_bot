@@ -33,8 +33,6 @@ class User(Base):
     current_model: Mapped[str] = mapped_column(default='gpt')
     is_blocked = mapped_column(Boolean, default=False)
     is_admin = mapped_column(Boolean, default=False)
-    image_gens = mapped_column(BigInteger, default=0)
-    video_gens = mapped_column(BigInteger, default=0)
 
 
 

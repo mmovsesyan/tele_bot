@@ -16,16 +16,14 @@ from bot.database.requests.plan_requests import create_plan_request
 from bot.database.requests.users import update_user
 from bot.texts import (
     PLANS_PART_1_TXT,
-    TO_BUY_PLAN_GO_LINK_TXT,
     INCORRECT_PAYMENT_TXT,
     ERROR_PAYMENT_TXT,
     PAYMENT_CONFIRMATION_TXT,
     USE_PART_TXT,
-    PLANS_PART_2_TXT, VIDEO_PLANS_TXT, VIDEO_PAYMENT_CONFIRMATION_TXT, TO_BUY_VIDEO_GO_LINK_TXT,
-    IMAGE_PAYMENT_SUCCEED_TXT, TO_BUY_IMAGE_GO_LINK_TXT, IMAGE_PLANS_TXT, IMAGE_PAYMENT_CONFIRMATION_TXT,
+    PLANS_PART_2_TXT,
 )
 from bot.utils.json_worker import get_plan_by_name
-from bot.utils.util import write_error, format_datetime, convert_to_usd
+from bot.utils.util import write_error, format_datetime
 
 router = Router()
 
@@ -60,7 +58,6 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
             user.request_remains["qwen"],
             user.request_remains["claude"],
             format_datetime(user.plan_due_to),
-            user.image_gens,
             get_txt_plans(json_file),
         )
     else:
@@ -69,7 +66,6 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
             user.request_remains["gpt"],
             user.request_remains["qwen"],
             user.request_remains["claude"],
-            user.image_gens,
             get_txt_plans(json_file),
         )
 
@@ -79,21 +75,13 @@ async def show_plans(call: types.CallbackQuery, state: FSMContext, user: User):
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("plan_"))
-@router.callback_query(lambda c: c.data and c.data.startswith("image_plan:"))
 async def select_plan(call: types.CallbackQuery, state: FSMContext, user: User):
-    if call.data.startswith("plan_"):
-        type_ = 'default'
-        json_plans = await json_worker.read("config/plans.json")
-        plan_uid = call.data.split("_", 1)[1]
-        plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
-        answer_txt = PAYMENT_CONFIRMATION_TXT.format(plan["name"], plan["price"])
+    type_ = 'default'
+    json_plans = await json_worker.read("config/plans.json")
+    plan_uid = call.data.split("_", 1)[1]
+    plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
+    answer_txt = PAYMENT_CONFIRMATION_TXT.format(plan["name"], plan["price"])
 
-    elif call.data.startswith("image_plan:"):
-        type_ = 'image'
-        plan_uid = call.data.split(":")[1]
-        json_plans = await json_worker.read("config/image_plans.json")
-        plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
-        answer_txt = IMAGE_PAYMENT_CONFIRMATION_TXT.format(plan["images"], plan["usd_price"])
     if not plan:
         await call.answer("Неверный тариф")
         return
@@ -122,18 +110,11 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
         await state.clear()
         return
     type_ = data.get("type_")
-    if type_ == 'default':
-        json_plans = await json_worker.read("config/plans.json")
-    elif type_ == 'image':
-        json_plans = await json_worker.read("config/image_plans.json")
+    json_plans = await json_worker.read("config/plans.json")
 
     plan = next((p for p in json_plans if p["uid"] == plan_uid), None)
-    if type_ == 'default':
-        price = plan['price']
-        desc = f"{user.user_id}:{plan['uid']}:30"
-    elif type_ == 'image':
-        price = await convert_to_usd(plan['usd_price'], 'USD')
-        desc = f"i:{user.user_id}:{plan['uid']}"
+    price = plan['price']
+    desc = f"{user.user_id}:{plan['uid']}:30"
 
     if not plan:
         await call.answer(INCORRECT_PAYMENT_TXT, show_alert=True)
@@ -168,15 +149,3 @@ async def confirm_purchase(call: types.CallbackQuery, state: FSMContext, user: U
             )
         except Exception:
             pass
-
-
-@router.callback_query(F.data == "image_buy")
-async def image_buy_join(call: types.CallbackQuery, state: FSMContext):
-    await call.message.delete_reply_markup()
-
-    json_file = await json_worker.read("config/image_plans.json")
-    plans = []
-    for el in json_file:
-        plans.append(f"👉 <b>{el['images']} изображений</b> за {el['usd_price']} USD")
-    final_txt = IMAGE_PLANS_TXT + '\n'.join(plans)
-    await call.message.answer(final_txt, parse_mode='HTML', reply_markup=vid_img_plans_kbd(json_file, 'image_plan', 'images'))

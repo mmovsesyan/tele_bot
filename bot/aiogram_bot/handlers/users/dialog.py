@@ -6,7 +6,7 @@ from aiogram import Bot, F, Router, types
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
 
-from bot import AI, image_ai, json_worker
+from bot import AI, voice_ai, json_worker
 from bot.aiogram_bot.markups.user_keyboards import (get_main_menu,
                                                     stop_dialog_keyboard)
 from bot.aiogram_bot.misc.states import Dialog
@@ -115,7 +115,7 @@ async def dialog(message: types.Message, state: FSMContext, user: User):
         elif message.voice:
             voice_path = os.path.abspath(os.path.join(fpath, uuid.uuid4().hex + '.ogg'))
             await message.bot.download(message.voice.file_id, voice_path)
-            request = await image_ai.get_text(voice_path)
+            request = await voice_ai.get_text(voice_path)
             await message.reply(f"🎤 <i>{html.escape(request)}</i>", parse_mode="HTML")
 
         else:

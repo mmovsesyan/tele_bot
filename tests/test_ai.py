@@ -54,21 +54,6 @@ async def test_gpt_generate_with_history():
     assert len(messages) == 4
 
 
-@pytest.mark.asyncio
-async def test_gpt_gen_image():
-    mock_client = MagicMock()
-    mock_response = MagicMock()
-    mock_response.data = [MagicMock()]
-    mock_response.data[0].url = "https://example.com/image.png"
-    mock_client.images.generate = AsyncMock(return_value=mock_response)
-
-    with patch("bot.ai.gpt.AsyncOpenAI", return_value=mock_client):
-        gpt = GPT("fake-api-key")
-        url = await gpt.gen_image("кот в шляпе")
-
-    assert url == "https://example.com/image.png"
-
-
 def test_encode_image(tmp_path):
     img_path = tmp_path / "test.jpg"
     img_path.write_bytes(b"fake_image_data")

@@ -87,21 +87,10 @@ def write_config(config_dir: Path, data: dict):
         "# Qwen legacy (оставлено для совместимости конфига)",
         f"QWEN_API_KEY: {data['qwen_api_key']}",
         f"QWEN_MODEL: {data['qwen_model']}",
-        f"QWEN_IMAGE_MODEL: {data['qwen_image_model']}",
         "",
         "# Anthropic legacy (оставлено для совместимости конфига)",
         f"ANTHROPIC_API_KEY: {data['anthropic_api_key']}",
         f"ANTHROPIC_MODEL: {data['anthropic_model']}",
-        "",
-        "# Видео генерация (Veo)",
-        f"GEN_VIDEO_API_KEY: {data['gen_video_api_key']}",
-        f"GEN_VIDEO_ASPECT_RATIO: {data['gen_video_aspect_ratio']}",
-        f"GEN_VIDEO_DURATION: {data['gen_video_duration']}",
-        "",
-        "# Генерация изображений (DALL-E)",
-        f"GEN_IMAGE_MODEL: {data['gen_image_model']}",
-        f"GEN_IMAGE_SIZE: {data['gen_image_size']}",
-        f"GEN_IMAGE_QUALITY: {data['gen_image_quality']}",
         "",
         "# Системные настройки",
         f"TIMEZONE: {data['timezone']}",
@@ -114,7 +103,7 @@ def write_config(config_dir: Path, data: dict):
 
 
 def copy_plans(src_dir: Path, dst_dir: Path):
-    for fname in ("plans.json", "image_plans.json", "video_plans.json"):
+    for fname in ("plans.json",):
         src = src_dir / fname
         dst = dst_dir / fname
         if src.exists():
@@ -181,7 +170,7 @@ def main():
     ollama_claude_model = ask("Модель Claude (Ollama)", "qwen3-coder-next:cloud")
     ollama_admin_model = ask("Админ модель (Ollama)", "kimi-k2.6:cloud")
 
-    print("\n--- OpenAI (только для картинок и Whisper) ---")
+    print("\n--- OpenAI (только для Whisper) ---")
     openai_api_key = ask("OpenAI API Key", "sk-proj-")
     openai_model = ask("OpenAI модель", "gpt-4o-mini")
     openai_admin_model = ask("OpenAI админ модель", "gpt-4o")
@@ -190,19 +179,8 @@ def main():
     print("\n--- Legacy keys (оставьте пустыми если не нужны) ---")
     qwen_api_key = ask("Qwen API Key", "")
     qwen_model = ask("Qwen модель", "qwen-max")
-    qwen_image_model = ask("Qwen image модель", "qwen-vl-plus")
     anthropic_api_key = ask("Anthropic API Key", "")
     anthropic_model = ask("Anthropic модель", "claude-3-7-sonnet-20250219")
-
-    print("\n--- Генерация видео (Veo) ---")
-    gen_video_api_key = ask("Veo API Key", "YOUR_API_KEY")
-    gen_video_aspect_ratio = ask("Соотношение сторон видео", "16:9")
-    gen_video_duration = ask("Длительность видео", "10")
-
-    print("\n--- Генерация изображений (DALL-E) ---")
-    gen_image_model = ask("Модель изображений", "dall-e-3")
-    gen_image_size = ask("Размер изображения", "1024x1024")
-    gen_image_quality = ask("Качество изображения", "standard")
 
     print("\n--- Системные настройки ---")
     timezone = ask("Таймзона", "Europe/Moscow")
@@ -229,15 +207,8 @@ def main():
         "openai_admin_token_limit": openai_admin_token_limit,
         "qwen_api_key": qwen_api_key,
         "qwen_model": qwen_model,
-        "qwen_image_model": qwen_image_model,
         "anthropic_api_key": anthropic_api_key,
         "anthropic_model": anthropic_model,
-        "gen_video_api_key": gen_video_api_key,
-        "gen_video_aspect_ratio": gen_video_aspect_ratio,
-        "gen_video_duration": gen_video_duration,
-        "gen_image_model": gen_image_model,
-        "gen_image_size": gen_image_size,
-        "gen_image_quality": gen_image_quality,
         "timezone": timezone,
     }
 

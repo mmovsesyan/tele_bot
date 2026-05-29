@@ -6,7 +6,7 @@ CONFIG_FILE="$CONFIG_DIR/config.yml"
 EXAMPLE_DIR="/app/config_example"
 
 # Копирование тарифных планов, если их нет
-for fname in plans.json image_plans.json video_plans.json; do
+for fname in plans.json; do
     if [ ! -f "$CONFIG_DIR/$fname" ]; then
         if [ -f "$EXAMPLE_DIR/$fname" ]; then
             cp "$EXAMPLE_DIR/$fname" "$CONFIG_DIR/$fname"

@@ -1,12 +1,11 @@
 # Tele Bot — AI Telegram Bot
 
-Telegram-бот с диалогами через AI-модели (Ollama Cloud), генерацией изображений, тарифной системой и админ-панелью.
+Telegram-бот с диалогами через AI-модели (Ollama Cloud), тарифной системой и админ-панелью.
 
 ## Возможности
 
 - **AI-диалоги** — переключение между GPT, Qwen и Claude (все через Ollama Cloud)
 - **Голосовые сообщения** — распознавание речи через Whisper (OpenAI)
-- **Генерация изображений** — DALL-E 3 (OpenAI)
 - **Тарифная система** — 3 плана: Бесплатный (12 часов), Стандарт, Премиум
 - **Одобрение тарифов админом** — заявки на покупку подтверждаются вручную через админ-панель
 - **Админ-панель** — рассылка, управление пользователями, одобрение заявок, статистика
@@ -18,7 +17,7 @@ Telegram-бот с диалогами через AI-модели (Ollama Cloud),
 
 - **Bot:** aiogram 3.x, Redis (FSM)
 - **DB:** PostgreSQL 15, SQLAlchemy async
-- **AI:** Ollama Cloud (GPT/Qwen/Claude), OpenAI (DALL-E + Whisper)
+- **AI:** Ollama Cloud (GPT/Qwen/Claude), OpenAI (Whisper)
 - **Deploy:** Docker + Docker Compose
 
 ## Тарифы

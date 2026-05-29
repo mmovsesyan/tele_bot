@@ -38,24 +38,12 @@ OLLAMA_GPT_MODEL = config['OLLAMA_GPT_MODEL']
 OLLAMA_QWEN_MODEL = config['OLLAMA_QWEN_MODEL']
 OLLAMA_CLAUDE_MODEL = config['OLLAMA_CLAUDE_MODEL']
 
-GEN_IMAGE_MODEL = config['GEN_IMAGE_MODEL']
-GEN_IMAGE_SIZE = config['GEN_IMAGE_SIZE']
-GEN_IMAGE_QUALITY = config['GEN_IMAGE_QUALITY']
-
-
-
 BOT_USERNAME = ''
 
 TIMEZONE = pytz.timezone(config['TIMEZONE'])
 
 REDIS_HOST = config['REDIS_HOST']
 REDIS_DB = config['REDIS_DB']
-
-QWEN_IMAGE_MODEL = config['QWEN_IMAGE_MODEL']
-
-GEN_VIDEO_DURATION = config['GEN_VIDEO_DURATION']
-GEN_VIDEO_ASPECT_RATIO = config['GEN_VIDEO_ASPECT_RATIO']
-GEN_VIDEO_API_KEY = config['GEN_VIDEO_API_KEY']
 BACKUP_DIR = 'backups'
 
 AI_PROMPT = "Отвечай строго на русском языке!Тебе нельзя отвечать на китайском языке!Все ответы выдавай в читаемом виде!"
