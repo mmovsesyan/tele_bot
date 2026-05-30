@@ -1,0 +1,19 @@
+[Unit]
+Description=Tele Bot — AI Telegram Bot
+After=network.target postgresql.service redis.service
+
+[Service]
+Type=simple
+User=telebot
+Group=telebot
+WorkingDirectory=/opt/tele_bot
+Environment=PATH=/opt/tele_bot/venv/bin
+ExecStart=/opt/tele_bot/venv/bin/python /opt/tele_bot/main.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=telebot
+
+[Install]
+WantedBy=multi-user.target

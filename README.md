@@ -58,6 +58,42 @@ python setup.py
 python main.py
 ```
 
+## Автозапуск
+
+### Docker
+
+В `docker-compose.yml` уже установлена политика `restart: unless-stopped` для всех сервисов. Бот автоматически запустится после перезагрузки сервера:
+
+```bash
+docker compose up -d
+```
+
+### Linux (systemd)
+
+Для серверов без Docker предоставлен systemd unit:
+
+```bash
+# 1. Убедись, что бот настроен и запускается вручную
+python main.py
+
+# 2. Установи systemd сервис
+sudo bash systemd/install.sh
+
+# 3. Запусти и включи автозагрузку
+sudo systemctl start telebot.service
+sudo systemctl enable telebot.service
+```
+
+**Команды управления:**
+
+| Команда | Описание |
+|---------|----------|
+| `sudo systemctl start telebot.service` | Запуск |
+| `sudo systemctl stop telebot.service` | Остановка |
+| `sudo systemctl restart telebot.service` | Перезапуск |
+| `sudo systemctl status telebot.service` | Статус |
+| `sudo journalctl -u telebot.service -f` | Логи в реальном времени |
+
 ## Конфигурация
 
 Все настройки задаются через `setup.py` или вручную в `config/config.yml`.
@@ -112,6 +148,7 @@ tele_bot/
 │   ├── payments/              # (отключено — Ckassa убрана)
 │   └── utils/                 # Конфиг, валюта, планы, бэкапы
 ├── config_example/            # Шаблоны конфига и тарифов
+├── systemd/                   # systemd unit для автозапуска
 ├── Dockerfile
 ├── docker-compose.yml
 ├── entrypoint.sh              # Автоинициализация БД + интерактивный setup
@@ -141,9 +178,10 @@ python3 -m pytest tests/ -v
 | `python main.py` | Запуск бота |
 | `python setup.py` | Перенастройка конфигурации |
 | `python make_db_recovery.py` | Бэкап PostgreSQL |
-| `docker compose up --build` | Запуск в Docker |
+| `docker compose up -d --build` | Запуск в Docker (фон) |
 | `docker compose down -v` | Полная очистка (с БД) |
 | `python3 -m pytest tests/ -v` | Запуск тестов |
+| `sudo systemctl start telebot` | Запуск сервиса (systemd) |
 
 ## Модели Ollama Cloud (по умолчанию)
 
